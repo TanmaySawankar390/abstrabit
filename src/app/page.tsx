@@ -239,6 +239,50 @@ export default function Home() {
     }
   };
 
+  if (!sessionUserId) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 text-zinc-900">
+        <div className="flex w-full max-w-xl flex-col items-center gap-6 rounded-3xl border border-zinc-200 bg-white px-8 py-12 text-center shadow-sm">
+          <h1 className="text-3xl font-semibold">Smart Bookmark App</h1>
+          <p className="text-sm text-zinc-600">
+            Add a URL with a title and see updates in real time.
+          </p>
+          <button
+            type="button"
+            onClick={handleSignIn}
+            disabled={authBusy || !isConfigured}
+            className="flex h-12 items-center gap-3 rounded-full border border-zinc-200 bg-white px-6 text-sm font-semibold text-zinc-800 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:bg-zinc-100"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 48 48"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <path
+                fill="#FFC107"
+                d="M43.611 20.083H42V20H24v8h11.303C33.438 32.27 29.017 35 24 35c-6.075 0-11-4.925-11-11s4.925-11 11-11c2.799 0 5.357 1.029 7.321 2.732l5.657-5.657C33.715 6.053 29.023 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.651-.389-3.917z"
+              />
+              <path
+                fill="#FF3D00"
+                d="M6.306 14.691 12.85 19.5C14.621 15.108 18.938 12 24 12c2.799 0 5.357 1.029 7.321 2.732l5.657-5.657C33.715 6.053 29.023 4 24 4c-7.682 0-14.363 4.327-17.694 10.691z"
+              />
+              <path
+                fill="#4CAF50"
+                d="M24 44c5.004 0 9.575-1.922 13.03-5.065l-6.01-5.085C29.007 35.5 26.623 36.5 24 36.5c-4.999 0-9.24-2.689-11.005-6.8l-6.49 5.002C9.8 40.721 16.46 44 24 44z"
+              />
+              <path
+                fill="#1976D2"
+                d="M43.611 20.083H42V20H24v8h11.303c-1.078 3.01-3.297 5.293-6.273 6.85l.001-.001 6.01 5.085C34.63 40.39 44 34 44 24c0-1.341-.138-2.651-.389-3.917z"
+              />
+            </svg>
+            Continue with Google
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-900">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
@@ -253,34 +297,16 @@ export default function Home() {
                 Add a URL with a title and see updates in real time.
               </p>
             </div>
-            {sessionUserId ? (
-              <button
-                type="button"
-                onClick={handleSignOut}
-                disabled={authBusy}
-                className="h-10 rounded-full border border-zinc-300 px-6 text-sm font-medium transition hover:border-zinc-400 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                Sign out
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSignIn}
-                disabled={authBusy || !isConfigured}
-                className="h-10 rounded-full bg-zinc-900 px-6 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
-              >
-                Continue with Google
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={authBusy}
+              className="h-10 rounded-full border border-zinc-300 px-6 text-sm font-medium transition hover:border-zinc-400 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Sign out
+            </button>
           </div>
         </header>
-
-        {!isConfigured ? (
-          <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-6 text-sm text-zinc-600">
-            Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to
-            enable login.
-          </div>
-        ) : null}
 
         {error ? (
           <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -288,51 +314,45 @@ export default function Home() {
           </div>
         ) : null}
 
-        {sessionUserId ? (
-          <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <form onSubmit={handleAdd} className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-                  Title
-                </label>
-                <input
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                  className="h-11 rounded-xl border border-zinc-200 px-4 text-sm outline-none transition focus:border-zinc-400"
-                  placeholder="Design resources"
-                  maxLength={120}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-                  URL
-                </label>
-                <input
-                  value={url}
-                  onChange={(event) => setUrl(event.target.value)}
-                  className="h-11 rounded-xl border border-zinc-200 px-4 text-sm outline-none transition focus:border-zinc-400"
-                  placeholder="https://example.com"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="h-11 rounded-xl bg-zinc-900 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
-              >
-                {submitting ? "Saving..." : "Add bookmark"}
-              </button>
-            </form>
-          </section>
-        ) : (
-          <section className="rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-600">
-            Sign in with Google to manage your bookmarks.
-          </section>
-        )}
+        <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <form onSubmit={handleAdd} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                Title
+              </label>
+              <input
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                className="h-11 rounded-xl border border-zinc-200 px-4 text-sm outline-none transition focus:border-zinc-400"
+                placeholder="Design resources"
+                maxLength={120}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                URL
+              </label>
+              <input
+                value={url}
+                onChange={(event) => setUrl(event.target.value)}
+                className="h-11 rounded-xl border border-zinc-200 px-4 text-sm outline-none transition focus:border-zinc-400"
+                placeholder="https://example.com"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="h-11 rounded-xl bg-zinc-900 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
+            >
+              {submitting ? "Saving..." : "Add bookmark"}
+            </button>
+          </form>
+        </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Bookmarks</h2>
-            {sessionUserId && userEmail ? (
+            {userEmail ? (
               <span className="text-xs text-zinc-500">{userEmail}</span>
             ) : null}
           </div>
